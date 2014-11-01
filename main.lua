@@ -23,10 +23,10 @@ function love.load()
 
 
 	
-	ball=newActor("ball",320,300,10,10,true,255,255,255)
+	ball=newActor("ball",50,300,10,10,true,255,255,255)
 	local vel={}
-	vel.x=100
-	vel.y=100
+	vel.x=0
+	vel.y=300
 	ball.vel=vel
 
 	ball.update=function(self,dt)
@@ -43,21 +43,30 @@ function love.load()
 			if horiz then
 				nVel.y=nVel.y*-1
 			else
-				print("Hi")
+				
 				nVel.x=nVel.x*-1
 			end
 			self.vel=nVel
-			print(nVel.x ..",".. nVel.y)
+			
 			x=self.rect.x+self.vel.x*dt
 			y=self.rect.y+self.vel.y*dt
-			self.rect.x=x
-			self.rect.y=y
-			self.rect:updateValues()
 
-		else
-			self.rect.x=x
-			self.rect.y=y
-			self.rect:updateValues()
+			self:collCallback(coldata.actor)
+			coldata.actor:collCallback(self)
+
+
+		end
+		self.rect.x=x
+		self.rect.y=y
+		self.rect:updateValues()
+		
+	end
+
+	ball.collCallback=function(self,other)
+		if other.name=="wallbottom" then
+			--self.vel.x=0
+			--self.vel.y=0
+			--self:destroy()
 		end
 	end
 
@@ -65,6 +74,19 @@ function love.load()
 	wallleft=newActor("wallleft",0,0,10,480,true,0,0,255)
 	wallbottom=newActor("wallbottom",0,470,640,10,true,0,0,255)
 	wallright=newActor("wallright",630,0,10,480,true,0,0,255)
+
+	--spawn blocks
+	for y=1,2 do
+		for x=1,15 do
+			local block=newActor("block",x*20-10,y*20-10,20,20,true,0,255,0)
+			block.collCallback=function(self,other)
+				if other.name=="ball" then
+					self:destroy()
+				end
+			end
+		end
+	end
+
 
 
 

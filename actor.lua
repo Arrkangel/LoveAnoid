@@ -36,11 +36,29 @@ function newActor(name,x,y,width,height,collides,r,g,b)
 	act.color=color
 
 	act.update=function(self,dt) end --blank function, to be replaced for any objects that need actual logic
+	act.collCallback=function(self,other) end --blank collision callback
 
 
 	act.id=actors.curID
 	actors[act.id]=act
 	actors.curID=actors.curID+1
+
+	act.destroy=function(self)
+		local desidx=0
+		local found=false
+		for i,v in ipairs(actors) do
+			if v==self and not found then
+				desidx=i
+				found=true
+			elseif found then
+				v.id=v.id-1
+			end
+		end
+		table.remove(actors,desidx)
+		actors.curID=table.getn(actors)+1
+
+	end
+
 	return act
 end
 
@@ -92,6 +110,8 @@ function collisionCheck(actor,x,y)
 				if r2.right<actor.rect.left or r2.left> actor.rect.right then
 					coldata.horiz=false
 				end
+
+
 
 
 				coldata.actor=v
