@@ -46,7 +46,7 @@ function love.load()
 				ball.rect.x=self.rect.x-ball.rect.width
 			end
 		end
-		
+
 
 	end
 
@@ -157,7 +157,7 @@ function love.load()
 	wallbottom=newActor("wallbottom",0,470,640,40,true,0,0,255)
 	wallright=newActor("wallright",630,0,40,480,true,0,0,255)
 
-	loadLevel("level4.png")
+	loadLevel("level5.png")
 
 
 
