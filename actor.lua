@@ -160,3 +160,12 @@ function normalizeVelocity(vel)
 	return normV
 end
 
+function numActors(name)
+	local num=0
+	for i,v in ipairs(actors) do
+		if v.name==name then
+			num=num+1
+		end
+	end
+	return num
+end

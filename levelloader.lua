@@ -52,7 +52,9 @@ function loadLevel(path)
 						love.audio.play(exp)
 						gamestate.score=gamestate.score+1
 						self:destroy()
-
+						if numActors("block")==0 then
+							changeLevel(gamestate.curLevel+1)
+						end
 					end
 				end
 			end

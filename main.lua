@@ -10,8 +10,8 @@ function love.load()
 	gamestate={}
 	gamestate.begin=true
 	gamestate.lives=5
-	gamestate.curLevel=1
-	gamestate.maxlevel=3
+	gamestate.curLevel=2
+	gamestate.maxLevel=5
 	gamestate.score=0
 	
 
@@ -104,6 +104,15 @@ function love.load()
 		end
 	end
 
+	ball.reset=function(self)
+		self.rect.x=resetPos.x
+		self.rect.y=resetPos.y
+		self.vel.x=resetVel.x
+		self.vel.y=resetVel.y
+		self.curDelay=0
+	end
+
+
 	ball.update=function(self,dt)
 		if self.curDelay<self.delay then
 			self.curDelay=self.curDelay+dt
@@ -115,17 +124,8 @@ function love.load()
 	ball.collCallback=function(self,other,coldata)
 		love.audio.play(blip)
 		if other.name=="wallbottom" then
-			--self.vel.x=0
-			--self.vel.y=0
-			--self:destroy()
-			print(self.rect.x)
-			print(resetPos.x)
-			self.rect.x=resetPos.x
-			self.rect.y=resetPos.y
-			self.vel.x=resetVel.x
-			self.vel.y=resetVel.y
-			self.curDelay=0
 			gamestate.lives=gamestate.lives-1
+			ball:reset()
 			
 		end
 		if other.name=="paddle" then
@@ -157,17 +157,30 @@ function love.load()
 	wallbottom=newActor("wallbottom",0,470,640,40,true,0,0,255)
 	wallright=newActor("wallright",630,0,40,480,true,0,0,255)
 
-	loadLevel("level5.png")
+	loadLevel("level"..gamestate.curLevel..".png")
+end
 
+function changeLevel(level)
+	if level>gamestate.maxLevel then
+		--put win stuff here
+		return nil
+	end
+	ball:reset()
+	actors={}
+	actors[1]=paddle
+	actors[2]=ball
+	actors.curID=3
+	walltop=newActor("walltop",0,-30,640,40,true,0,0,255)
+	wallleft=newActor("wallleft",-30,0,40,480,true,0,0,255)
+	wallbottom=newActor("wallbottom",0,470,640,40,true,0,0,255)
+	wallright=newActor("wallright",630,0,40,480,true,0,0,255)
 
-
-
-
-
+	
+	loadLevel("level"..level..".png")
+	gamestate.curLevel=level
 
 
 end
-
 
 function love.update(dt)
 	if gamestate.begin and gamestate.lives>=0 then
