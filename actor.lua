@@ -36,7 +36,7 @@ function newActor(name,x,y,width,height,collides,r,g,b)
 	act.color=color
 
 	act.update=function(self,dt) end --blank function, to be replaced for any objects that need actual logic
-	act.collCallback=function(self,other) end --blank collision callback
+	act.collCallback=function(self,other,coldata) end --blank collision callback
 
 
 	act.id=actors.curID
