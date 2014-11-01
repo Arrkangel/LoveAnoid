@@ -10,7 +10,7 @@ function love.load()
 	gamestate={}
 	gamestate.begin=true
 	gamestate.lives=5
-	gamestate.curLevel=2
+	gamestate.curLevel=1
 	gamestate.maxLevel=5
 	gamestate.score=0
 	
