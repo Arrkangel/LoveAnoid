@@ -38,6 +38,16 @@ function love.load()
 		end
 
 		self.rect:updateValues()
+
+		if checkOverlap(self.rect,ball.rect) then
+			if ball.rect.x > self.rect.x then
+				ball.rect.x=self.rect.x+self.rect.width
+			else
+				ball.rect.x=self.rect.x-ball.rect.width
+			end
+		end
+		
+
 	end
 
 
