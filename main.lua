@@ -210,7 +210,8 @@ function drawScore()
 end
 function drawGameOver()
 	love.graphics.setColor(255,255,255)
-	love.graphics.print("GAME OVER",300,300)
+	love.graphics.print("GAME OVER! Score: "..gamestate.score,300,300)
+
 end
 
 
