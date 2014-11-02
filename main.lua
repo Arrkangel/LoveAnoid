@@ -286,9 +286,9 @@ function love.keypressed(key,isrepeat)
 			gamestate.lives=gamestate.lives-1
 		end
 	else
-		if key=="w" or key=="right" then
+		if key=="w" or key=="up" then
 			mainmenu.moveSelector(mainmenu.selector-1)
-		elseif key=="s" or key=="left" then
+		elseif key=="s" or key=="down" then
 			mainmenu.moveSelector(mainmenu.selector+1)
 		elseif key=="return" then
 			mainmenu.menus[mainmenu.curMenu].runSelection()
