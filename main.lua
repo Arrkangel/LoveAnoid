@@ -8,11 +8,104 @@ function love.load()
 	expdata=love.sound.newSoundData("exp.wav")
 
 	gamestate={}
-	gamestate.begin=true
+	gamestate.begin=false
 	gamestate.lives=5
 	gamestate.curLevel=1
 	gamestate.maxLevel=5
 	gamestate.score=0
+
+--main menu
+
+	mainmenu={}
+	mainmenu.selector=1
+	mainmenu.curMenu=1
+	mainmenu.maxSelect=2
+
+
+	mainmenu.menus={}
+
+	mainmenu.moveSelector=function(sel)
+		print(sel)
+		if sel>mainmenu.maxSelect then
+			sel=1
+		elseif sel<1 then
+			sel=mainmenu.maxSelect
+		end
+
+		mainmenu.selector=sel
+
+	end
+
+--root menu
+
+	local rootmenu={}
+	rootmenu.updateSelector=function()
+		mainmenu.maxSelect=2
+		mainmenu.selector=1
+	end
+	rootmenu.runSelection=function()
+		if mainmenu.selector==1 then
+			gamestate.begin=true
+		else
+			mainmenu.curMenu=2
+			mainmenu.menus[2].updateSelector()
+		end
+
+
+	end
+
+
+	rootmenu.draw=function()
+		love.graphics.print("Main Menu",200,200)
+		local selchar={}
+		selchar[1]=""
+		selchar[2]=""
+		selchar[mainmenu.selector]=">"
+		love.graphics.print(selchar[1].."Start Game",200,220)
+		love.graphics.print(selchar[2].."Change Level",200,240)
+	end
+
+	mainmenu.menus[1]=rootmenu
+
+--level menu
+
+	local levelmenu={}
+	levelmenu.updateSelector=function()
+		mainmenu.maxSelect=gamestate.maxLevel+1
+		mainmenu.selector=1
+	end
+	levelmenu.runSelection=function()
+		if mainmenu.selector==1 then
+			mainmenu.curMenu=1
+			mainmenu.menus[mainmenu.curMenu].updateSelector()
+		else
+			changeLevel(mainmenu.selector-1)
+		end
+	end
+	levelmenu.draw=function()
+		love.graphics.print("Level Selector",200,200)
+		local retstr=""
+		if mainmenu.selector==1 then
+			retstr=retstr..">"
+		end
+		love.graphics.print(retstr.."Return to Main Menu",200,220)
+		for i=1,gamestate.maxLevel do
+			local str=""
+			if i ==mainmenu.selector-1 then
+				str=str..">"
+			end
+			if i==gamestate.curLevel then
+				str=str.."|"
+			end
+			str=str.."Level "..i
+			love.graphics.print(str,200,220+i*20)
+		end
+	end
+
+	mainmenu.menus[2]=levelmenu
+
+
+
 	
 
 
@@ -182,8 +275,27 @@ function changeLevel(level)
 
 end
 
+function love.keypressed(key,isrepeat)
+	if gamestate.begin then
+		if key=="n" and not irepeat then
+			ball:reset()
+			gamestate.lives=gamestate.lives-1
+		end
+	else
+		if key=="w" then
+			mainmenu.moveSelector(mainmenu.selector-1)
+		elseif key=="s" then
+			mainmenu.moveSelector(mainmenu.selector+1)
+		elseif key=="return" then
+			mainmenu.menus[mainmenu.curMenu].runSelection()
+		end
+	end
+	
+end
+
+
 function love.update(dt)
-	if gamestate.begin and gamestate.lives>=0 then
+	if gamestate.begin and gamestate.lives>=0 and love.window.hasFocus() then
 		updateActors(dt)
 	end
 
@@ -198,15 +310,16 @@ function love.draw()
 		drawActors()
 	elseif gamestate.lives<0 then
 		drawGameOver()
-	end
-	
 
-	
+	else
+		mainmenu.menus[mainmenu.curMenu].draw()
+	end
 
 end
 function drawScore()
 	love.graphics.setColor(255,255,255)
-	love.graphics.print("Score: "..gamestate.score .. " Extra Lives: "..gamestate.lives,20,450)
+	love.graphics.print("Score: "..gamestate.score .. " Extra Lives: "..gamestate.lives..
+	" Stuck ball workaround: Press N to reset ball (lose a life) ",20,450)
 end
 function drawGameOver()
 	love.graphics.setColor(255,255,255)
