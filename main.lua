@@ -228,8 +228,8 @@ function love.load()
 				local diff=selfx-middle
 
 				self.vel.x=self.vel.x+(diff*math.abs(diff))/4
-				if self.vel.x>=self.maxVel*0.9 then
-					self.vel.x=self.maxVel*0.9
+				if math.abs(self.vel.x)>=self.maxVel*0.9 then
+					self.vel.x=self.maxVel*0.9*(math.abs(self.vel.x)/self.vel.x)
 				end
 
 				local newVel=normalizeVelocity(self.vel)
@@ -254,7 +254,7 @@ function love.load()
 	wallbottom=newActor("wallbottom",0,470,640,40,true,0,0,255)
 	wallright=newActor("wallright",630,0,40,480,true,0,0,255)
 
-	loadLevel("level"..gamestate.curLevel..".png")
+	loadLevel("dat/level"..gamestate.curLevel..".png")
 end
 
 function changeLevel(level)
@@ -273,19 +273,19 @@ function changeLevel(level)
 	wallright=newActor("wallright",630,0,40,480,true,0,0,255)
 
 	
-	loadLevel("level"..level..".png")
+	loadLevel("dat/level"..level..".png")
 	gamestate.curLevel=level
 
 
 end
 
 function love.keypressed(key,isrepeat)
-	if gamestate.begin then
+	if gamestate.begin and gamestate.lives>=0 then
 		if key=="n" and not irepeat then
 			ball:reset()
 			gamestate.lives=gamestate.lives-1
 		end
-	else
+	elseif not gamestate.begin and gamestate.lives>=0 then
 		if key=="w" or key=="up" then
 			mainmenu.moveSelector(mainmenu.selector-1)
 		elseif key=="s" or key=="down" then
@@ -293,6 +293,11 @@ function love.keypressed(key,isrepeat)
 		elseif key=="return" then
 			mainmenu.menus[mainmenu.curMenu].runSelection()
 		end
+	elseif gamestate.begin and gamestate.lives<0 then
+		gamestate.begin=false
+		gamestate.lives=5
+		gamestate.score=0
+		gamestate.curLevel=1
 	end
 	
 end
@@ -301,7 +306,10 @@ end
 function love.update(dt)
 	if gamestate.begin and gamestate.lives>=0 and love.window.hasFocus() then
 		updateActors(dt)
+	
+
 	end
+
 
 
 
@@ -327,7 +335,7 @@ function drawScore()
 end
 function drawGameOver()
 	love.graphics.setColor(255,255,255)
-	love.graphics.print("GAME OVER! Score: "..gamestate.score,300,300)
+	love.graphics.print("GAME OVER! Score: "..gamestate.score.."\n Press any key to reset",300,300)
 
 end
 
