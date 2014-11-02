@@ -114,11 +114,11 @@ function love.load()
 
 	paddle.update=function(self,dt)
 		local a=0
-		if love.keyboard.isDown("a") then
+		if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
 			a=1
 		end
 		local d=0
-		if love.keyboard.isDown("d") then
+		if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
 			d=1
 		end
 		local multi=300
@@ -228,6 +228,10 @@ function love.load()
 				local diff=selfx-middle
 
 				self.vel.x=self.vel.x+(diff*math.abs(diff))/4
+				if self.vel.x>=self.maxVel*0.9 then
+					self.vel.x=self.maxVel*0.9
+				end
+
 				local newVel=normalizeVelocity(self.vel)
 				--print(newVel.x)
 				--print(newVel.y)
@@ -282,9 +286,9 @@ function love.keypressed(key,isrepeat)
 			gamestate.lives=gamestate.lives-1
 		end
 	else
-		if key=="w" then
+		if key=="w" or key=="right" then
 			mainmenu.moveSelector(mainmenu.selector-1)
-		elseif key=="s" then
+		elseif key=="s" or key=="left" then
 			mainmenu.moveSelector(mainmenu.selector+1)
 		elseif key=="return" then
 			mainmenu.menus[mainmenu.curMenu].runSelection()
